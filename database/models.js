@@ -1,16 +1,22 @@
-let mongoose = require('mongoose');
-let Schema = mongoose.Schema;
+const { db, Sequelize } = require('./db');
 
-let placeSchema = new Schema({
-    location: {type: String, required: true},
-    distance: {type: Number, required: false},
-    user_id: { type: Schema.Types.ObjectId, ref: 'User' },
+// TODO: Add user_id to Place
+const Place = db.define('place', {
+    id: {type: Sequelize.INTEGER, primaryKey: true, autoIncrement: true},
+    location: {type: Sequelize.STRING, required: true},
+    distance: {type: Sequelize.INTEGER, required: false}
 });
 
-let userSchema = new Schema({
-    username: {type: String, required: true, unique: true},
-    password: {type: String, required: true},
+const User = db.define('user', {
+    id: {type: Sequelize.INTEGER, primaryKey: true, autoIncrement: true},
+    username: {type: Sequelize.STRING, required: true, unique: true},
+    password: {type: Sequelize.STRING, required: true}
 });
 
-module.exports.Place = mongoose.model('Place', placeSchema);
-module.exports.User = mongoose.model('User', userSchema);
+//To add userId to Place, either of these commands will work:
+Place.belongsTo(User); // This will add userId to Place
+// User.hasMany(Place); // This will also add userId to Place
+
+
+module.exports.Place = Place;
+module.exports.User = User;
